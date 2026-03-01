@@ -14,6 +14,12 @@ La app organiza tus tareas en tres columnas:
 |---|---|---|
 | Tareas pendientes | Tareas en curso | Tareas completadas |
 
+**Modo claro**
+<img width="1619" height="925" alt="image" src="https://github.com/user-attachments/assets/7a1968b3-f5c4-4abe-be56-1602bcbc4f2b" />
+
+**Modo oscuro**
+<img width="1646" height="932" alt="image" src="https://github.com/user-attachments/assets/57e3af63-f932-4f58-871a-fd486d743da7" />
+
 ---
 
 ## 🚀 Funcionalidades
