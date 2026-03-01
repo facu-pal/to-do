@@ -1,0 +1,163 @@
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> To-Do </title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="asset/favicon.png">
+    
+</head>
+
+<body>
+    <div class="container">
+        <h1>✨ To-Do </h1>
+
+        <!-- Barra de herramientas -->
+        <div class="toolbar">
+            <div class="stats" id="boardStats">
+                <div class="stat-item">📝 Por Empezar: <span class="stat-value" id="todoStats">0</span></div>
+                <div class="stat-item">⚡ En Progreso: <span class="stat-value" id="doingStats">0</span></div>
+                <div class="stat-item">✅ Completadas: <span class="stat-value" id="doneStats">0</span></div>
+                <div class="stat-item total">📊 Total: <span class="stat-value" id="totalBoardTasks">0</span></div>
+            </div>
+            <button class="theme-toggle" onclick="toggleDarkMode()">
+                <span id="themeIcon">🌙</span> Modo Oscuro
+            </button>
+        </div>
+
+        <!-- Panel de control de tableros -->
+        <div class="boards-control">
+            <div class="create-board">
+                <input type="text" id="newBoardName" placeholder="Nombre del nuevo tablero..."
+                    onkeypress="handleBoardKeyPress(event)">
+                <select id="boardColor" class="priority-select">
+                    <option value="#667eea">Azul</option>
+                    <option value="#ff6b6b">Rojo</option>
+                    <option value="#6bcf7f">Verde</option>
+                    <option value="#ffd93d">Amarillo</option>
+                    <option value="#9b59b6">Púrpura</option>
+                </select>
+                <button onclick="createNewBoard()">➕ Crear Nuevo Tablero</button>
+            </div>
+
+            <div class="boards-tabs" id="boardsTabs"></div>
+        </div>
+
+        <!-- Panel del tablero actual -->
+        <div class="current-board" id="currentBoardPanel">
+            <div class="board-header">
+                <div class="board-title">
+                    <span id="boardColorIndicator" style="width: 20px; height: 20px; border-radius: 5px;"></span>
+                    <h2 id="currentBoardTitle">📋 General</h2>
+                </div>
+                <div class="board-actions">
+                    <button class="edit-board" onclick="showEditBoardModal()">✏️ Editar</button>
+                    <button class="export-board" onclick="exportBoard()">📥 Exportar</button>
+                </div>
+            </div>
+
+
+
+            <div class="add-task">
+                <input type="text" id="taskInput" placeholder="¿Qué necesitas hacer?"
+                    onkeypress="handleTaskKeyPress(event)">
+                <select id="taskPriority" class="priority-select">
+                    <option value="media">Prioridad Media</option>
+                    <option value="alta">Prioridad Alta</option>
+                    <option value="baja">Prioridad Baja</option>
+                </select>
+                <input type="date" id="taskDueDate" class="date-input">
+                <input type="text" id="taskTags" placeholder="Tags (separados por coma)" class="date-input">
+                <button onclick="addTask()">➕ Agregar Tarea</button>
+            </div>
+        </div>
+
+        <!-- Búsqueda y filtros -->
+        <div class="search-filters">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="searchInput" placeholder="Buscar tareas..." oninput="filterTasks()">
+            </div>
+            <select class="filter-select" id="priorityFilter" onchange="filterTasks()">
+                <option value="all">Todas las prioridades</option>
+                <option value="alta">Alta prioridad</option>
+                <option value="media">Media prioridad</option>
+                <option value="baja">Baja prioridad</option>
+            </select>
+            <select class="filter-select" id="tagFilter" onchange="filterTasks()">
+                <option value="all">Todos los tags</option>
+            </select>
+            <button class="clear-filters" onclick="clearFilters()">🗑️ Limpiar filtros</button>
+        </div>
+
+        <!-- Tablero Kanban -->
+        <div class="boards-container">
+            <div class="board-column todo" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="column-header">
+                    <h3>📝 Por Empezar</h3>
+                    <span class="task-count" id="todo-count">0</span>
+                </div>
+                <div class="task-list" id="todo-list"></div>
+            </div>
+
+            <div class="board-column doing" id="doing" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="column-header">
+                    <h3>⚡ En Progreso</h3>
+                    <span class="task-count" id="doing-count">0</span>
+                </div>
+                <div class="task-list" id="doing-list"></div>
+            </div>
+
+            <div class="board-column done" id="done" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="column-header">
+                    <h3>✅ Finalizadas</h3>
+                    <span class="task-count" id="done-count">0</span>
+                </div>
+                <div class="task-list" id="done-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar tablero -->
+    <div class="modal" id="editBoardModal">
+        <div class="modal-content">
+            <h3>✏️ Editar Tablero</h3>
+            <input type="text" id="editBoardName" placeholder="Nombre del tablero">
+            <select id="editBoardColor">
+                <option value="#667eea">Azul</option>
+                <option value="#ff6b6b">Rojo</option>
+                <option value="#6bcf7f">Verde</option>
+                <option value="#ffd93d">Amarillo</option>
+                <option value="#9b59b6">Púrpura</option>
+            </select>
+            <div class="modal-buttons">
+                <button onclick="saveBoardEdit()">Guardar</button>
+                <button onclick="closeEditBoardModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar tarea -->
+    <div class="modal" id="editTaskModal">
+        <div class="modal-content">
+            <h3>✏️ Editar Tarea</h3>
+            <input type="text" id="editTaskText" placeholder="Descripción de la tarea">
+            <select id="editTaskPriority">
+                <option value="media">Prioridad Media</option>
+                <option value="alta">Prioridad Alta</option>
+                <option value="baja">Prioridad Baja</option>
+            </select>
+            <input type="date" id="editTaskDueDate">
+            <input type="text" id="editTaskTags" placeholder="Tags (separados por coma)">
+            <div class="modal-buttons">
+                <button onclick="saveTaskEdit()">Guardar</button>
+                <button onclick="closeEditTaskModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
